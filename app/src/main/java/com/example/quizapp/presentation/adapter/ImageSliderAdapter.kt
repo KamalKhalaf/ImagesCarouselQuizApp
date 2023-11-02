@@ -5,7 +5,8 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.quizapp.data.ImageItem
-import com.example.quizapp.presentation.views.MainActivity
+import com.example.quizapp.presentation.views.ImageFragment
+import com.example.quizapp.presentation.base.MainActivity
 
 /**
  * @Created by: Kamal.Farghali
