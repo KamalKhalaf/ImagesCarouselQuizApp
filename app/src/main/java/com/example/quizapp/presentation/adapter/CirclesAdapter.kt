@@ -15,11 +15,8 @@ import com.example.quizapp.databinding.CircleItemBinding
  */
 
 internal class CirclesAdapter(private var cardsCircleList: List<CircleActiveModel>) : RecyclerView.Adapter<CirclesAdapter.ViewHolder>() {
-
     override fun getItemCount(): Int = cardsCircleList.size
-
     override fun onBindViewHolder(holder: CirclesAdapter.ViewHolder, position: Int) = holder.bind(cardsCircleList[position])
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = CircleItemBinding.inflate(inflater, parent, false)
