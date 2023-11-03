@@ -13,7 +13,7 @@ import com.example.quizapp.presentation.base.MainActivity
  * @Date: 02/11/2023 : 7:10 PM
  */
 
-class ImageSliderAdapter(private var context: Activity, private var imagesData: ArrayList<ImageItem>) : FragmentStateAdapter(context as MainActivity) {
+class ImageSliderAdapter(private var context: Activity, private var imagesData: List<ImageItem>) : FragmentStateAdapter(context as MainActivity) {
 
     override fun getItemCount(): Int = imagesData.size
     override fun createFragment(position: Int): Fragment {

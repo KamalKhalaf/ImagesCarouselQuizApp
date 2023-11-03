@@ -10,6 +10,5 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class ImageItem(val imageResId: Int, var cards: List<ImageContent?>?): Parcelable
-
 @Parcelize
 data class ImageContent(val name: String):Parcelable

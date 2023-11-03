@@ -6,9 +6,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
-import com.example.quizapp.data.ImageItem
+import com.example.quizapp.R
 import com.example.quizapp.base.BaseFragment
 import com.example.quizapp.data.CircleActiveModel
+import com.example.quizapp.data.ImageContent
+import com.example.quizapp.data.ImageItem
 import com.example.quizapp.databinding.FragmentHomeBinding
 import com.example.quizapp.presentation.adapter.CirclesAdapter
 import com.example.quizapp.presentation.adapter.ImageSliderAdapter
@@ -16,8 +18,8 @@ import com.example.quizapp.presentation.adapter.ImageSliderAdapter
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate){
 
     private lateinit var imageSliderAdapter: ImageSliderAdapter
-    private lateinit var imagesData : ArrayList<ImageItem>
     private lateinit var circlesAdapter: CirclesAdapter
+    private lateinit var imagesData : List<ImageItem>
     private var circleList: ArrayList<CircleActiveModel> = ArrayList()
 
     private var onPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
@@ -27,7 +29,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     }
     override fun initViews() {
 
+        imagesData = listOf(
+            ImageItem(R.drawable.image1, listOf(ImageContent("Item 1"), ImageContent("Item 2"), ImageContent("Item 3"), ImageContent("Item 4"), ImageContent("Item 5"))),
+            ImageItem(R.drawable.image2, listOf(ImageContent("Item 1"), ImageContent("Item 2"), ImageContent("Item 3"))),
+            ImageItem(R.drawable.image3, listOf(ImageContent("Item 1"), ImageContent("Item 2"), ImageContent("Item 3"), ImageContent("Item 4"))),
+            ImageItem(R.drawable.image4, listOf(ImageContent("Item 1"), ImageContent("Item 2"))),
+            ImageItem(R.drawable.image5, listOf(ImageContent("Item 1"), ImageContent("Item 2"), ImageContent("Item 3"), ImageContent("Item 4"), ImageContent("Item 5"), ImageContent("Item 6"), ImageContent("Item 7"))),
+            ImageItem(R.drawable.image6, listOf(ImageContent("Item 1"), ImageContent("Item 2"), ImageContent("Item 3"), ImageContent("Item 4"), ImageContent("Item 5"))),
+            ImageItem(R.drawable.image7, listOf(ImageContent("Item 1"), ImageContent("Item 2"), ImageContent("Item 3"))),
+        )
+
         imageSliderAdapter = ImageSliderAdapter(requireActivity(), imagesData)
+        circlesAdapter = CirclesAdapter(circleList)
+
         val mCircleLayoutManager = LinearLayoutManager(requireActivity())
         mCircleLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
 
@@ -61,7 +75,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         updateImageContentList(imagesData[position])
         circleList.clear()
 
-        (0 until imagesData.size).forEach { _ ->
+        (imagesData.indices).forEach { _ ->
             circleList.add(CircleActiveModel(0))
         }
         circleList[position].type = 1
@@ -71,5 +85,4 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private fun updateImageContentList(imageItem: ImageItem) {
 
     }
-
 }
