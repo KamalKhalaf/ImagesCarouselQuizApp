@@ -1,6 +1,7 @@
 package com.example.quizapp.common
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 
 /**
@@ -10,3 +11,11 @@ import android.view.ViewGroup
 
 
 typealias Inflate<T> = (LayoutInflater, ViewGroup?, Boolean) -> T
+
+fun View.gone() {
+    visibility = View.GONE
+}
+
+fun View.visible() {
+    visibility = View.VISIBLE
+}

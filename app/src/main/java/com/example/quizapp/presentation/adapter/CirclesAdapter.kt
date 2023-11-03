@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quizapp.R
+import com.example.quizapp.common.gone
+import com.example.quizapp.common.visible
 import com.example.quizapp.data.CircleActiveModel
 import com.example.quizapp.databinding.CircleItemBinding
 
@@ -25,8 +27,7 @@ internal class CirclesAdapter(private var cardsCircleList: List<CircleActiveMode
 
     internal inner class ViewHolder(private var binding: CircleItemBinding, private var parent: View) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cardsCircle: CircleActiveModel) {
-            if (cardsCircle.type == 1) binding.ivCircle.background = ContextCompat.getDrawable( parent.context, R.drawable.bg_green_circle)
-            else binding.ivCircle.background = ContextCompat.getDrawable( parent.context, R.drawable.bg_gray_circle)
+            if (cardsCircle.type == 1) binding.ivCircle.visible() else binding.ivCircle.gone()
         }
     }
 }

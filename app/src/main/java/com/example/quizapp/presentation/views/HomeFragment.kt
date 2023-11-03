@@ -42,9 +42,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         imageSliderAdapter = ImageSliderAdapter(requireActivity(), imagesData)
         circlesAdapter = CirclesAdapter(circleList)
 
-        val mCircleLayoutManager = LinearLayoutManager(requireActivity())
-        mCircleLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-
         val transformer = CompositePageTransformer()
         transformer.apply {
             addTransformer(MarginPageTransformer(40))
@@ -64,11 +61,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             setPageTransformer(transformer)
         }
 
+        val mCircleLayoutManager = LinearLayoutManager(requireActivity())
+        mCircleLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
         binding.rvListRecycle.apply {
             layoutManager = mCircleLayoutManager
             itemAnimator = DefaultItemAnimator()
             adapter = circlesAdapter
         }
+
+        updateCircleMarker(0)
     }
 
     private fun updateCircleMarker(position: Int) {
