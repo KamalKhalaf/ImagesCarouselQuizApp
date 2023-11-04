@@ -8,6 +8,7 @@ import kotlinx.android.parcel.Parcelize
  * @Date: 02/11/2023 : 7:24 PM
  */
 
+data class ImagesResponse(var data : List<ImageItem>)
 @Parcelize
 data class ImageItem(val imageResId: Int, var imageContent: List<ImageContent>): Parcelable
 @Parcelize

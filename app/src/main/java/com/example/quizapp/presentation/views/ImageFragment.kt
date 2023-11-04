@@ -1,7 +1,7 @@
 package com.example.quizapp.presentation.views
 
 import android.os.Bundle
-import com.example.quizapp.base.BaseFragment
+import com.example.quizapp.presentation.base.BaseFragment
 import com.example.quizapp.data.ImageItem
 import com.example.quizapp.databinding.FragmentImageBinding
 

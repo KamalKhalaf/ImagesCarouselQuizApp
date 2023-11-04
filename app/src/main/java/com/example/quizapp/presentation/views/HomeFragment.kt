@@ -1,45 +1,51 @@
 package com.example.quizapp.presentation.views
 
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.CompositePageTransformer
 import androidx.viewpager2.widget.MarginPageTransformer
 import androidx.viewpager2.widget.ViewPager2
-import com.example.quizapp.R
-import com.example.quizapp.base.BaseFragment
 import com.example.quizapp.data.CircleActiveModel
-import com.example.quizapp.data.ImageContent
 import com.example.quizapp.data.ImageItem
 import com.example.quizapp.databinding.FragmentHomeBinding
 import com.example.quizapp.presentation.adapter.CirclesAdapter
 import com.example.quizapp.presentation.adapter.ImageContentAdapter
 import com.example.quizapp.presentation.adapter.ImageSliderAdapter
+import com.example.quizapp.presentation.base.BaseFragment
+import com.example.quizapp.presentation.viewmodel.ImagesViewModel
+import com.example.quizapp.presentation.viewmodel.ImagesViewStatus
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
+@AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate){
 
     private lateinit var imageSliderAdapter: ImageSliderAdapter
     private lateinit var circlesAdapter: CirclesAdapter
     private lateinit var imageContentAdapter: ImageContentAdapter
-    private lateinit var imagesData : List<ImageItem>
+    private var imagesData : List<ImageItem> = ArrayList()
     private var circleList: ArrayList<CircleActiveModel> = ArrayList()
+    private val viewmodel: ImagesViewModel by viewModels()
+
 
     private var onPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
-            updateCircleMarker(position)
+            updateCircleMarkerAndContentList(position)
         }
     }
     override fun initViews() {
 
-        imagesData = listOf(
-            ImageItem(R.drawable.image1, listOf(ImageContent("Item 1"), ImageContent("Item 2"), ImageContent("Item 3"), ImageContent("Item 4"), ImageContent("Item 5"))),
-            ImageItem(R.drawable.image2, listOf(ImageContent("Item 1"), ImageContent("Item 2"), ImageContent("Item 3"))),
-            ImageItem(R.drawable.image3, listOf(ImageContent("Item 1"), ImageContent("Item 2"), ImageContent("Item 3"), ImageContent("Item 4"))),
-            ImageItem(R.drawable.image4, listOf(ImageContent("Item 1"), ImageContent("Item 2"))),
-            ImageItem(R.drawable.image5, listOf(ImageContent("Item 1"), ImageContent("Item 2"), ImageContent("Item 3"), ImageContent("Item 4"), ImageContent("Item 5"), ImageContent("Item 6"), ImageContent("Item 7"), ImageContent("Item 8"), ImageContent("Item 9"), ImageContent("Item 10"), ImageContent("Item 11"), ImageContent("Item 12"), ImageContent("Item 13"), ImageContent("Item 11"), ImageContent("Item 14"), ImageContent("Item 15"), ImageContent("Item 11"), ImageContent("Item 16"))),
-            ImageItem(R.drawable.image6, listOf(ImageContent("Item 1"), ImageContent("Item 2"), ImageContent("Item 3"), ImageContent("Item 4"), ImageContent("Item 5"))),
-            ImageItem(R.drawable.image7, listOf(ImageContent("Item 1"), ImageContent("Item 2"), ImageContent("Item 3"))),
-        )
+        viewmodel.searchImages("L")
+        viewmodel.state
+            .flowWithLifecycle(lifecycle, Lifecycle.State.CREATED)
+            .onEach { status -> handleResponse(status) }
+            .launchIn(lifecycleScope)
 
         imageSliderAdapter = ImageSliderAdapter(requireActivity(), imagesData)
         circlesAdapter = CirclesAdapter(circleList)
@@ -52,7 +58,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 page.scaleY = 0.85f + r * 0.15f
             }
         }
-
         binding.vpViewPager.apply {
             adapter = imageSliderAdapter
             registerOnPageChangeCallback(onPageChangeCallback)
@@ -70,27 +75,36 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             itemAnimator = DefaultItemAnimator()
             adapter = circlesAdapter
         }
-        updateCircleMarker(0)
+
     }
 
-    private fun updateCircleMarker(position: Int) {
-        updateImageContentList(imagesData[position])
-        circleList.clear()
+    private fun showData(response: List<ImageItem>) {
+        imagesData = response
+        updateCircleMarkerAndContentList(0)
+        imageSliderAdapter.notifyDataSetChanged()
+    }
 
-        (imagesData.indices).forEach { _ ->
-            circleList.add(CircleActiveModel(0))
+    private fun handleResponse(status: ImagesViewStatus) {
+        when (status) {
+            is ImagesViewStatus.SuccessGetImages -> showData(status.response)
+            else -> {}
         }
-        circleList[position].type = 1
-        circlesAdapter.notifyDataSetChanged()
     }
 
-    private fun updateImageContentList(imageItem: ImageItem) {
-        imageContentAdapter = ImageContentAdapter(imageItem.imageContent)
+    private fun updateCircleMarkerAndContentList(position: Int) {
+        imageContentAdapter = ImageContentAdapter(imagesData[position].imageContent)
         binding.rvImageContent.apply {
             layoutManager = LinearLayoutManager(requireActivity())
             isNestedScrollingEnabled = false
             adapter = imageContentAdapter
             imageContentAdapter.notifyDataSetChanged()
         }
+
+        circleList.clear()
+        (imagesData.indices).forEach { _ ->
+            circleList.add(CircleActiveModel(0))
+        }
+        circleList[position].type = 1
+        circlesAdapter.notifyDataSetChanged()
     }
 }
