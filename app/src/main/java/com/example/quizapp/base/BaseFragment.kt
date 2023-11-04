@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.viewbinding.ViewBinding
 import com.example.quizapp.common.Inflate
@@ -33,4 +34,12 @@ abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) 
     }
 
     abstract fun initViews()
+    val Any.TAG: String
+        get() {
+            return javaClass.simpleName
+        }
+
+    fun showShortToast(text: String) = Toast.makeText(requireActivity(), text, Toast.LENGTH_SHORT).show()
+    fun showShortToast(txtRes: Int) = Toast.makeText(requireActivity(), txtRes, Toast.LENGTH_SHORT).show()
+
 }

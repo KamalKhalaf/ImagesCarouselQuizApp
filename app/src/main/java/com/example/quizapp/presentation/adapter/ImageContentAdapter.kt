@@ -21,6 +21,11 @@ class ImageContentAdapter (private var imagesContent: List<ImageContent>) : Recy
         return ViewHolder(binding, parent)
     }
 
+    fun updateList(list : List<ImageContent>){
+        imagesContent = list
+        notifyDataSetChanged()
+    }
+
     inner class ViewHolder(private var binding: ImageContentItemBinding, private var parent: View) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cardsCircle: ImageContent) {
             binding.tvImageContent.text = cardsCircle.name

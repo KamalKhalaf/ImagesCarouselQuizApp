@@ -1,5 +1,7 @@
 package com.example.quizapp.presentation.views
 
+import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +17,8 @@ import com.example.quizapp.databinding.FragmentHomeBinding
 import com.example.quizapp.presentation.adapter.CirclesAdapter
 import com.example.quizapp.presentation.adapter.ImageContentAdapter
 import com.example.quizapp.presentation.adapter.ImageSliderAdapter
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate){
 
@@ -22,11 +26,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private lateinit var circlesAdapter: CirclesAdapter
     private lateinit var imageContentAdapter: ImageContentAdapter
     private lateinit var imagesData : List<ImageItem>
+    private lateinit var selectedImage : ImageItem
     private var circleList: ArrayList<CircleActiveModel> = ArrayList()
 
     private var onPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
-            updateCircleMarker(position)
+            updateCircleMarkerAndContent(position)
         }
     }
     override fun initViews() {
@@ -70,27 +75,38 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             itemAnimator = DefaultItemAnimator()
             adapter = circlesAdapter
         }
-        updateCircleMarker(0)
-    }
+        updateCircleMarkerAndContent(0)
 
-    private fun updateCircleMarker(position: Int) {
-        updateImageContentList(imagesData[position])
-        circleList.clear()
-
-        (imagesData.indices).forEach { _ ->
-            circleList.add(CircleActiveModel(0))
+        binding.etSearch.doAfterTextChanged { text ->
+            lifecycleScope.launch {
+                text?.let {
+                    if (it.isNotEmpty()) {
+                        val filteredItems = selectedImage.imageContent.filter { content -> content.name.contains(it)}
+                        imageContentAdapter.updateList(filteredItems)
+                    } else {
+                        imageContentAdapter.updateList(selectedImage.imageContent)
+                    }
+                }
+            }
         }
-        circleList[position].type = 1
-        circlesAdapter.notifyDataSetChanged()
     }
 
-    private fun updateImageContentList(imageItem: ImageItem) {
-        imageContentAdapter = ImageContentAdapter(imageItem.imageContent)
+    private fun updateCircleMarkerAndContent(position: Int) {
+        selectedImage = imagesData[position]
+
+        imageContentAdapter = ImageContentAdapter(selectedImage.imageContent)
         binding.rvImageContent.apply {
             layoutManager = LinearLayoutManager(requireActivity())
             isNestedScrollingEnabled = false
             adapter = imageContentAdapter
             imageContentAdapter.notifyDataSetChanged()
         }
+
+        circleList.clear()
+        (imagesData.indices).forEach { _ ->
+            circleList.add(CircleActiveModel(0))
+        }
+        circleList[position].type = 1
+        circlesAdapter.notifyDataSetChanged()
     }
 }
