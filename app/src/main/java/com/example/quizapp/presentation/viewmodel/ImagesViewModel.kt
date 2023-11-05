@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.quizapp.data.ImageItem
 import com.example.quizapp.domain.usecases.GetImagesUseCase
+import com.example.quizapp.presentation.views.HomeFragment
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -29,39 +30,23 @@ class ImagesViewModel @Inject constructor(
     private val _state = MutableStateFlow<ImagesViewStatus>(ImagesViewStatus.Init)
     val state: StateFlow<ImagesViewStatus> get() = _state
 
-    private val keywordFlow = MutableSharedFlow<String>()
-    private var searchJob: Job? = null
-
     init {
         viewModelScope.launch {
-            keywordFlow.collectLatest {
-                searchJob?.cancel()
-                getImagesUseCase.invoke(it)
-                    .onStart {
-                        _state.value = ImagesViewStatus.IsLoading(true)
-                        delay(1000)
-                    }
-                    .catch { exception ->
-                        _state.value = ImagesViewStatus.ShowToast(exception.message.toString())
-                        _state.value = ImagesViewStatus.IsLoading(false)
-                    }
-                    .collect { result ->
-                        _state.value = ImagesViewStatus.IsLoading(false)
-                        _state.value = ImagesViewStatus.SuccessGetImages(result.data)
+            getImagesUseCase.invoke()
+                .onStart {
+                    _state.value = ImagesViewStatus.IsLoading(true)
+                    delay(1000)
+                }
+                .catch { exception ->
+                    _state.value = ImagesViewStatus.ShowToast(exception.message.toString())
+                    _state.value = ImagesViewStatus.IsLoading(false)
+                }
+                .collect { result ->
+                    _state.value = ImagesViewStatus.IsLoading(false)
+                    _state.value = ImagesViewStatus.SuccessGetImages(result.data)
 
-                    }
-            }
+                }
         }
-    }
-
-    fun searchImages(keyword: String) {
-        viewModelScope.launch {
-            keywordFlow.emit(keyword)
-        }
-    }
-
-    fun resetSearch() {
-        searchJob?.cancel()
     }
 }
 

@@ -25,6 +25,11 @@ internal class CirclesAdapter(private var cardsCircleList: List<CircleActiveMode
         return ViewHolder(binding, parent)
     }
 
+    fun update(list: List<CircleActiveModel>) {
+        cardsCircleList = list
+        notifyDataSetChanged()
+    }
+
     internal inner class ViewHolder(private var binding: CircleItemBinding, private var parent: View) : RecyclerView.ViewHolder(binding.root) {
         fun bind(cardsCircle: CircleActiveModel) {
             if (cardsCircle.type == 1) binding.ivCircle.visible() else binding.ivCircle.gone()

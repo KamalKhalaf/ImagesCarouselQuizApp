@@ -21,4 +21,9 @@ class ImageSliderAdapter(private var context: Activity, private var imagesData: 
         bundle.putParcelable("ARG_IMAGE_OBJECT" , imagesData[position])
         return ImageFragment.newInstance(position, bundle)
     }
+
+    fun update(list: List<ImageItem>) {
+        imagesData = list
+        notifyDataSetChanged()
+    }
 }

@@ -4,11 +4,13 @@ import android.os.Bundle
 import com.example.quizapp.presentation.base.BaseFragment
 import com.example.quizapp.data.ImageItem
 import com.example.quizapp.databinding.FragmentImageBinding
+import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * @Created by: Kamal.Farghali
  * @Date: 02/11/2023 : 7:41 PM
  */
+@AndroidEntryPoint
 class ImageFragment : BaseFragment<FragmentImageBinding>(FragmentImageBinding::inflate) {
 
     private lateinit var imagesData : ImageItem

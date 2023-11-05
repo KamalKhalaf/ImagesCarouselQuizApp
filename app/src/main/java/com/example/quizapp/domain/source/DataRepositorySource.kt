@@ -9,5 +9,5 @@ import kotlinx.coroutines.flow.Flow
  */
 
 interface DataRepositorySource {
-    suspend fun getImages(search : String): Flow<ImagesResponse>
+    suspend fun getImages(): Flow<ImagesResponse>
 }
